@@ -1,4 +1,4 @@
-module json-parser
+module github.com/Eke-Manuel/json-parser
 
 go 1.21.3
 
@@ -8,7 +8,6 @@ require (
 )
 
 require (
-	github.com/Eke-Manuel/json-parser v0.0.0-20240417141011-27f4131a7fd3 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
