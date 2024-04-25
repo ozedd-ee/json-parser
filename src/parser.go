@@ -1,4 +1,20 @@
-package main
+/*
+Copyright © 2024 Emmanuel Ozeh  github.com/Eke-Manuel
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+package src
 
 import (
 	"fmt"
@@ -14,7 +30,7 @@ func parseArray(tokens []token) (node, []token) {
 	}
 	for {
 		var astNode node
-		astNode, tokens = parse(tokens)
+		astNode, tokens = Parse(tokens)
 		jsonArray = append(jsonArray, astNode.value)
 		t := tokens[0]
 		if t.value == RIGHTBRACKET {
@@ -51,7 +67,7 @@ func parseObject(tokens []token) (node, []token) {
 			log.Fatalf("Expected colon between key and value at position: %v, got: %s", ts[0].position, ts[0].value)
 		}
 		var jsonValue node
-		jsonValue, ts = parse(ts[1:])
+		jsonValue, ts = Parse(ts[1:])
 		jsonObject[fmt.Sprint(jsonKey.value)] = jsonValue.value
 
 		t := ts[0]
@@ -71,7 +87,7 @@ func parseObject(tokens []token) (node, []token) {
 	return node{value: ""}, []token{}
 }
 
-func parse(tokens []token) (node, []token) {
+func Parse(tokens []token) (node, []token) {
 	t := tokens[0]
 	if t.value == LEFTBRACE {
 		return parseObject(tokens[1:])
