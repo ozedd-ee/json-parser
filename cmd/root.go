@@ -36,6 +36,9 @@ var rootCmd = &cobra.Command{
 	Example: "json-parser \"test.json\"  \njson-parser -l \"test.json\"",
 	Run: func(cmd *cobra.Command, args []string) {
 		file := args[0]
+		if file[len(file)-6:len(file)-1] != ".json" {
+			log.Fatal("Expected a JSON file as argument ")
+		}
 		fileContent, err := os.ReadFile(file)
 		if err != nil {
 			log.Fatal(err)
