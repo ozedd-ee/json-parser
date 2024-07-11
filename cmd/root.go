@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Emmanuel Ozeh  github.com/Eke-Manuel
+Copyright © 2024 Emmanuel Ozeh  github.com/ozedd-ee
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/Eke-Manuel/json-parser/src"
+	"github.com/ozedd-ee/json-parser/src"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -36,7 +36,7 @@ var rootCmd = &cobra.Command{
 	Example: "json-parser \"test.json\"  \njson-parser -l \"test.json\"",
 	Run: func(cmd *cobra.Command, args []string) {
 		file := args[0]
-		if file[len(file)-6:len(file)-1] != ".json" {
+		if file[len(file)-5:] != ".json" {
 			log.Fatal("Expected a JSON file as argument ")
 		}
 		fileContent, err := os.ReadFile(file)
