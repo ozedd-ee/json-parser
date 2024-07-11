@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Emmanuel Ozeh  github.com/Eke-Manuel
+Copyright © 2024 Emmanuel Ozeh  github.com/ozedd-ee
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

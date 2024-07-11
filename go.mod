@@ -1,4 +1,4 @@
-module github.com/Eke-Manuel/json-parser
+module github.com/ozedd-ee/json-parser
 
 go 1.21.3
 

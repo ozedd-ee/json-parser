@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Emmanuel Ozeh  github.com/Eke-Manuel
+Copyright © 2024 Emmanuel Ozeh  github.com/ozedd-ee
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 package main
 
-import "github.com/Eke-Manuel/json-parser/cmd"
+import "github.com/ozedd-ee/json-parser/cmd"
 
 func main() {
 	cmd.Execute()
