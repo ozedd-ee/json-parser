@@ -21,37 +21,44 @@ import (
 	"log"
 )
 
-func parseArray(tokens []token) (node, []token) {
+func parseArray(tokens []token) (Node, []token) {
 	t := tokens[0]
 	jsonArray := []any{}
 
 	if t.value == RIGHTBRACKET {
-		return node{value: jsonArray}, tokens[1:]
+		return Node{isLeaf: true, leafValue: jsonArray}, tokens[1:]
 	}
+	ts := tokens
 	for {
-		var astNode node
-		astNode, tokens = Parse(tokens)
-		jsonArray = append(jsonArray, astNode.value)
-		t := tokens[0]
+		var node Node
+		node, ts = Parse(ts)
+		if node.isLeaf {
+			jsonArray = append(jsonArray, node.leafValue)
+		} else {
+			jsonArray = append(jsonArray, node.Value)
+		}
+		t := ts[0]
 		if t.value == RIGHTBRACKET {
-			return node{value: jsonArray}, tokens[1:]
-		} else if len(tokens) == 0 {
+			// Should the node returned at this point be a leaf? If so, we won't be able to traverse any non-leaf nodes contained in the array.
+			// Consider creating a custom type to has both map and 'any' fields; then make 'jsonArray' an array of the custom type.
+			return Node{isLeaf: true, leafValue: jsonArray}, ts[1:]
+		} else if len(ts) == 0 {
 			log.Fatalf("Expected end-of-array bracket ']' at position: %v, got : %v", t.position, t.value)
 			break
 		} else if t.value != COMMA {
 			log.Fatalf("Expected comma ',' at the end of object at position: %v, got: %v", t.position, t.value)
 		} else {
-			tokens = tokens[1:]
+			ts = ts[1:]
 		}
 	}
-	return node{}, tokens
+	return Node{}, tokens
 }
 
-func parseObject(tokens []token) (node, []token) {
-	jsonObject := make(map[string]any)
+func parseObject(tokens []token) (Node, []token) {
+	node := make(map[string]any)
 	t := tokens[0]
 	if t.value == RIGHTBRACE {
-		return node{value: jsonObject}, tokens[1:]
+		return Node{Value: make(map[string]any)}, tokens[1:]
 	}
 	ts := tokens // variable copy of tokens
 
@@ -66,16 +73,22 @@ func parseObject(tokens []token) (node, []token) {
 		if ts[0].value != COLON {
 			log.Fatalf("Expected colon between key and value at position: %v, got: %s", ts[0].position, ts[0].value)
 		}
-		var jsonValue node
+
+		// TODO: Study forge's stack trace display and model the AST after that
+		var jsonValue Node
 		jsonValue, ts = Parse(ts[1:])
-		jsonObject[fmt.Sprint(jsonKey.value)] = jsonValue.value
+		if jsonValue.isLeaf {
+			node[fmt.Sprint(jsonKey.value)] = jsonValue.leafValue
+		} else {
+			node[fmt.Sprint(jsonKey.value)] = jsonValue.Value
+		}
 
 		t := ts[0]
 		if t.value == RIGHTBRACE {
-			return node{value: jsonObject}, ts[1:]
+			return Node{Value: node}, ts[1:]
 		}
 		if t.value != COMMA {
-			log.Fatalf("Expected end-of-object comma at position: %v, got %s", t.position, t.value)
+			log.Fatalf("Expected end-of-value comma at position: %v, got %s", t.position, t.value)
 		}
 		if len(ts) != 0 {
 			ts = ts[1:]
@@ -84,15 +97,15 @@ func parseObject(tokens []token) (node, []token) {
 			break
 		}
 	}
-	return node{value: ""}, []token{}
+	return Node{}, []token{}
 }
 
-func Parse(tokens []token) (node, []token) {
+func Parse(tokens []token) (Node, []token) {
 	t := tokens[0]
 	if t.value == LEFTBRACE {
 		return parseObject(tokens[1:])
 	} else if t.value == LEFTBRACKET {
 		return parseArray(tokens[1:])
 	}
-	return node{value: t}, tokens[1:]
+	return Node{isLeaf: true, leafValue: t}, tokens[1:]
 }

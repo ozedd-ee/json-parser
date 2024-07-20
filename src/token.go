@@ -24,6 +24,8 @@ type token struct {
 	position int
 }
 
-type node struct {
-	value interface{}
+type  Node struct {
+	isLeaf bool
+	leafValue any
+	Value map[string]any
 }
