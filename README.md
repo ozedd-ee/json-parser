@@ -31,4 +31,4 @@ For a list of available options, run:
 json-parser.exe help
 ```
 
-NOTE: The token type consists of the token value (the actual token) and its position in the JSON string.
+NOTE: The output 'token' type consists of two fields - the token value(the actual token) and its position in the JSON string.
