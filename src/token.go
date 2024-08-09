@@ -20,12 +20,12 @@ const FALSE_LEN = 5
 const NIL_LEN = 3
 
 type token struct {
-	value interface{}
-	position int
+	Value interface{} `json:",omitempty"`
+	position int `json:"-"`
 }
 
 type  Node struct {
-	isLeaf bool
-	leafValue any
-	Value map[string]any
+	isLeaf bool `json:"-"`
+	LeafValue any `json:",omitempty"`
+	Value map[string]any `json:",omitempty"`
 }

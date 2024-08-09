@@ -17,6 +17,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -47,8 +48,13 @@ var rootCmd = &cobra.Command{
 		if onlyLex {
 			fmt.Printf("TOKENS:\n %v \n \n", tokens)
 		} else {
-			ast, _ := src.Parse(tokens)
-			fmt.Printf("AST:\n %v \n \n", ast)
+			abstractSyntaxTree, _ := src.Parse(tokens)
+			jsonEncodedAST, err := json.MarshalIndent(abstractSyntaxTree, "", " ")
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Printf("AST:\n %v \n \n", string(jsonEncodedAST))
+			}
 		}
 	},
 }

@@ -41,7 +41,7 @@ func Lex(jsonString string) []token {
 				break
 			}
 			if string(s[0]) == v {
-				tokens = append(tokens, token{value: v, position: currentPos})
+				tokens = append(tokens, token{Value: v, position: currentPos})
 				currentPos++
 				s = s[1:]
 			}
@@ -49,25 +49,25 @@ func Lex(jsonString string) []token {
 		var jsonToken token
 
 		jsonToken, s = lexString(s, currentPos)
-		if jsonToken.value != nil {
+		if jsonToken.Value != nil {
 			currentPos++
 			tokens = append(tokens, jsonToken)
 		}
 
 		jsonToken, s = lexNumber(s, currentPos)
-		if jsonToken.value != nil {
+		if jsonToken.Value != nil {
 			currentPos++
 			tokens = append(tokens, jsonToken)
 		}
 
 		jsonToken, s = lexBool(s, currentPos)
-		if jsonToken.value != nil {
+		if jsonToken.Value != nil {
 			currentPos++
 			tokens = append(tokens, jsonToken)
 		}
 
 		jsonToken, s = lexNil(s, currentPos)
-		if jsonToken.value == nil {
+		if jsonToken.Value == nil {
 			currentPos++
 			tokens = append(tokens, jsonToken)
 		}
@@ -82,28 +82,28 @@ func Lex(jsonString string) []token {
 func lexString(s string, currentPos int) (token, string) {
 
 	if len(s) == 0 {
-		return token{value: nil}, s
+		return token{Value: nil}, s
 	}
 	jsonString := ""
 	if string(s[0]) == QUOTE {
 		s = s[1:]
 	} else {
-		return token{value: nil}, s
+		return token{Value: nil}, s
 	}
 	for _, v := range s {
 		if string(v) == QUOTE {
-			return token{value: jsonString, position: currentPos}, s[len(jsonString)+1:]
+			return token{Value: jsonString, position: currentPos}, s[len(jsonString)+1:]
 		} else {
 			jsonString += string(v)
 		}
 	}
 	log.Fatal("Expected end-of-string quote")
-	return token{value: nil}, s
+	return token{Value: nil}, s
 }
 
 func lexNumber(s string, currentPos int) (token, string) {
 	if len(s) == 0 {
-		return token{value: nil}, s
+		return token{Value: nil}, s
 	}
 	jsonNumberString := ""
 	numChar := make(map[string]bool)
@@ -120,7 +120,7 @@ func lexNumber(s string, currentPos int) (token, string) {
 	}
 
 	if len(jsonNumberString) == 0 {
-		return token{value: nil}, s
+		return token{Value: nil}, s
 	}
 	s = s[len(jsonNumberString):]
 	for _, v := range jsonNumberString {
@@ -129,35 +129,35 @@ func lexNumber(s string, currentPos int) (token, string) {
 			if err != nil {
 				log.Fatal(err)
 			}
-			return token{value: jsonFloat, position: currentPos}, s
+			return token{Value: jsonFloat, position: currentPos}, s
 		}
 	}
 	jsonInt, err := strconv.Atoi(jsonNumberString)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return token{value: jsonInt, position: currentPos}, s
+	return token{Value: jsonInt, position: currentPos}, s
 }
 
 func lexBool(s string, currentPos int) (token, string) {
 	arrayLen := len(s)
 	if arrayLen == 0 {
-		return token{value: nil}, s
+		return token{Value: nil}, s
 	}
 	if arrayLen >= TRUE_LEN && string(s[:TRUE_LEN]) == "true" {
-		return token{value: true, position: currentPos}, s[TRUE_LEN:]
+		return token{Value: true, position: currentPos}, s[TRUE_LEN:]
 	} else if arrayLen >= FALSE_LEN && string(s[:FALSE_LEN]) == "false" {
-		return token{value: false, position: currentPos}, s[FALSE_LEN:]
+		return token{Value: false, position: currentPos}, s[FALSE_LEN:]
 	}
-	return token{value: nil}, s
+	return token{Value: nil}, s
 }
 
 func lexNil(s string, currentPos int) (token, string) {
 	if len(s) == 0 {
-		return token{value: ""}, s
+		return token{Value: ""}, s
 	}
 	if len(s) >= NIL_LEN && string(s[:NIL_LEN]) == "nil" {
-		return token{value: nil, position: currentPos}, s[NIL_LEN:]
+		return token{Value: nil, position: currentPos}, s[NIL_LEN:]
 	}
-	return token{value: ""}, s
+	return token{Value: ""}, s
 }

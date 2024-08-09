@@ -25,28 +25,28 @@ func parseArray(tokens []token) (Node, []token) {
 	t := tokens[0]
 	jsonArray := []any{}
 
-	if t.value == RIGHTBRACKET {
-		return Node{isLeaf: true, leafValue: jsonArray}, tokens[1:]
+	if t.Value == RIGHTBRACKET {
+		return Node{isLeaf: true, LeafValue: jsonArray}, tokens[1:]
 	}
 	ts := tokens
 	for {
 		var node Node
 		node, ts = Parse(ts)
 		if node.isLeaf {
-			jsonArray = append(jsonArray, node.leafValue)
+			jsonArray = append(jsonArray, node.LeafValue)
 		} else {
 			jsonArray = append(jsonArray, node.Value)
 		}
 		t := ts[0]
-		if t.value == RIGHTBRACKET {
+		if t.Value == RIGHTBRACKET {
 			// Should the node returned at this point be a leaf? If so, we won't be able to traverse any non-leaf nodes contained in the array.
 			// Consider creating a custom type to has both map and 'any' fields; then make 'jsonArray' an array of the custom type.
-			return Node{isLeaf: true, leafValue: jsonArray}, ts[1:]
+			return Node{isLeaf: true, LeafValue: jsonArray}, ts[1:]
 		} else if len(ts) == 0 {
-			log.Fatalf("Expected end-of-array bracket ']' at position: %v, got : %v", t.position, t.value)
+			log.Fatalf("Expected end-of-array bracket ']' at position: %v, got : %v", t.position, t.Value)
 			break
-		} else if t.value != COMMA {
-			log.Fatalf("Expected comma ',' at the end of object at position: %v, got: %v", t.position, t.value)
+		} else if t.Value != COMMA {
+			log.Fatalf("Expected comma ',' at the end of object at position: %v, got: %v", t.position, t.Value)
 		} else {
 			ts = ts[1:]
 		}
@@ -57,38 +57,37 @@ func parseArray(tokens []token) (Node, []token) {
 func parseObject(tokens []token) (Node, []token) {
 	node := make(map[string]any)
 	t := tokens[0]
-	if t.value == RIGHTBRACE {
+	if t.Value == RIGHTBRACE {
 		return Node{Value: make(map[string]any)}, tokens[1:]
 	}
 	ts := tokens // variable copy of tokens
 
 	for {
 		jsonKey := ts[0]
-		_, ok := jsonKey.value.(string)
+		_, ok := jsonKey.Value.(string)
 		if ok {
 			ts = ts[1:]
 		} else {
-			log.Fatalf("Expected string key, at position: %v, got: %s", jsonKey.position, jsonKey.value)
+			log.Fatalf("Expected string key, at position: %v, got: %s", jsonKey.position, jsonKey.Value)
 		}
-		if ts[0].value != COLON {
-			log.Fatalf("Expected colon between key and value at position: %v, got: %s", ts[0].position, ts[0].value)
+		if ts[0].Value != COLON {
+			log.Fatalf("Expected colon between key and Value at position: %v, got: %s", ts[0].position, ts[0].Value)
 		}
 
-		// TODO: Study forge's stack trace display and model the AST after that
 		var jsonValue Node
 		jsonValue, ts = Parse(ts[1:])
 		if jsonValue.isLeaf {
-			node[fmt.Sprint(jsonKey.value)] = jsonValue.leafValue
+			node[fmt.Sprint(jsonKey.Value)] = jsonValue.LeafValue
 		} else {
-			node[fmt.Sprint(jsonKey.value)] = jsonValue.Value
+			node[fmt.Sprint(jsonKey.Value)] = jsonValue.Value
 		}
 
 		t := ts[0]
-		if t.value == RIGHTBRACE {
+		if t.Value == RIGHTBRACE {
 			return Node{Value: node}, ts[1:]
 		}
-		if t.value != COMMA {
-			log.Fatalf("Expected end-of-value comma at position: %v, got %s", t.position, t.value)
+		if t.Value != COMMA {
+			log.Fatalf("Expected end-of-Value comma at position: %v, got %s", t.position, t.Value)
 		}
 		if len(ts) != 0 {
 			ts = ts[1:]
@@ -102,10 +101,10 @@ func parseObject(tokens []token) (Node, []token) {
 
 func Parse(tokens []token) (Node, []token) {
 	t := tokens[0]
-	if t.value == LEFTBRACE {
+	if t.Value == LEFTBRACE {
 		return parseObject(tokens[1:])
-	} else if t.value == LEFTBRACKET {
+	} else if t.Value == LEFTBRACKET {
 		return parseArray(tokens[1:])
 	}
-	return Node{isLeaf: true, leafValue: t}, tokens[1:]
+	return Node{isLeaf: true, LeafValue: t}, tokens[1:]
 }
