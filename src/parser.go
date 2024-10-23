@@ -39,8 +39,6 @@ func parseArray(tokens []token) (Node, []token) {
 		}
 		t := ts[0]
 		if t.Value == RIGHTBRACKET {
-			// Should the node returned at this point be a leaf? If so, we won't be able to traverse any non-leaf nodes contained in the array.
-			// Consider creating a custom type to has both map and 'any' fields; then make 'jsonArray' an array of the custom type.
 			return Node{isLeaf: true, LeafValue: jsonArray}, ts[1:]
 		} else if len(ts) == 0 {
 			log.Fatalf("Expected end-of-array bracket ']' at position: %v, got : %v", t.position, t.Value)
